@@ -1,7 +1,18 @@
 const express = require('express');
 const exphbs = require ('express-handlebars');
+const mongoose = require('mongoose');
 
 const app = express();
+
+// Connect to Mongoose
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/vidjot-dev')
+.then(() => console.log('MongoDB Connected...'))
+.catch(err => console.log(err));
+
+// Load Idea Model
+require('./models/Idea');
+const Idea = mongoose.model('ideas');
 
 // Handlebars Middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -9,12 +20,15 @@ app.set('view engine', 'handlebars');
 
 // Index Route
 app.get('/', (req, res) => {
-  res.send('Hello there! This is the home page!');
+  const title = 'Welcome';
+  res.render('index', {
+    title
+  });
 });
 
 // About Route
 app.get('/about', (req, res) => {
-  res.send('About');
+  res.render('about');
 });
 
 const port = 5000;
